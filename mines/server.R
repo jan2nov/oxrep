@@ -14,7 +14,8 @@ library("sf")
 library("readxl")
 library("openxlsx")
 library("httr")
-
+library("highcharter")
+library("htmlwidgets")
 
 #helping function for display data
 filter_data <- function(data,data_filter){
@@ -39,7 +40,7 @@ source("gg_timeline_plot.R", local = TRUE)
 source("data-processing.R", local = TRUE)
 
 # disconnect from the database
-lapply(dbListConnections(MySQL()), dbDisconnect)
+# lapply(dbListConnections(MySQL()), dbDisconnect)
 
 source("map_tools.R", local = TRUE)
 
@@ -82,7 +83,7 @@ shinyServer(function(input, output) {
     selectInput(
       "metals_mined",
       "Metals to show",
-      choices = metals,
+      choices = metals_choices,
       multiple = TRUE,
       width = "100%"
     )
@@ -104,6 +105,7 @@ shinyServer(function(input, output) {
   
     
   output$overview_map <- renderLeaflet({
+    #filter data by the timeline
     if (is.null(input$timeperiod_data)) {
       return()
     } else {
@@ -145,6 +147,21 @@ shinyServer(function(input, output) {
     #               anim = TRUE,
     #               animType = "fade")
     
+    #filter data by the timeline
+    if (is.null(input$timeperiod_data)) {
+      return()
+    } else {
+      display_main_data <- filter_time_data(display_main_data,
+                                            input$timeperiod_data[1],
+                                            input$timeperiod_data[2])
+    }
+    
+    #filter data by metals
+    selected_metals <- input$metals_mined
+    if (!is.null(selected_metals)) {
+      display_main_data <- filter_data(display_main_data,selected_metals)
+    }
+    
     display_tbl <- display_main_data %>% 
                    select(display_tbl_labels)
     datatable(
@@ -181,11 +198,14 @@ shinyServer(function(input, output) {
           )
           }
           })
-  }"
-        )
-      )
+          }"
+        ) # rowcallback
+      ) # list
     ) %>%
       formatStyle(1:2, color = "#6d9dc8", cursor = "default")
-  })
+    
+  }, server = FALSE)
+  
+  source("charts.R", local = TRUE)
   
 })

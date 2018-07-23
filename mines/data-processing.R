@@ -2,6 +2,7 @@
 ### =============================================
 oxrep_db <- dbPool(
   drv = RMySQL::MySQL(),
+  # drv = RMariaDB::MariaDB(),
   dbname = "oxrep",
   port = 3306,
   host = "163.1.169.203",
@@ -53,7 +54,9 @@ nr_missed_coord <- total_observations_dt_main_data - nrow(display_main_data)
 metals <- dt_main_data %>% 
           select(+contains("metalMined")) %>% 
           colnames()
+metals_name <- c("Gold", "Silver", "Lead", "Copper", "Tin", "Iron", "Mercury/Cinnabar", "Zinc", "Other")
 # metals <- gsub("^.*?metalMined","",metals)
+metals_choices <- setNames(metals, metals_name)
 
 #many missing dates on the mines set the NA to -999 to 999
 nr_dates_missing <- display_main_data %>% filter(is.na(notBeforeOpeningDate)
@@ -71,21 +74,33 @@ display_tbl_labels <- c("site",
                        "province",
                        "country",
                        "region",
-                       "metalMinedGold")
+                       metals)
 display_tbl_names <- c("Mine site",
                        "Ancient Name",
                        "Province",
                        "Country",
                        "Region",
-                       "Gold")
+                       metals_name)
 
-tick_columns <- c("metalMinedGold")
+tick_columns <- metals
+
 display_main_data <- display_main_data %>%
   mutate_at(vars(one_of(tick_columns)), funs(plyr::mapvalues(
     .,
-    from = c("0", "1", ""),
-    to = c(FALSE, TRUE, FALSE)
+    from = c("0", "1", "", NA),
+    to = c(FALSE, TRUE, FALSE, FALSE)
   ))) %>%
   mutate_at(vars(one_of(tick_columns)), funs(as.logical))
 
 
+## charts utils
+choices_group <- list("Country" = "country", "Province" = "province")
+choices_count <- c("Metals", "Mining Techniques", "Number of Mines")
+choices_stack <- list("Percent" = "percent", "Number of Mines" = "normal")
+list_ancientnames <- unique(display_main_data$ancientName)
+list_country <- unique(display_main_data$country)
+list_region <- unique(display_main_data$region)
+list_district <- unique(display_main_data$miningDistrict)
+
+# close db conection
+poolClose(oxrep_db)

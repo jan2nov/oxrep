@@ -21,7 +21,6 @@ color: #000000;
 # load.fontawesome()
 # Define UI for application that draws a histogram
 shinyUI(
-  
    fluidPage(
      inlineCSS(appCSS),
      theme = "animate.min.css",
@@ -41,18 +40,23 @@ shinyUI(
       column(width = 1)
     ),
     p(),
-    fluidPage(
-      # div(DT::dataTableOutput("main_DT", width = "100%"), style = "font-size: 90%"),
-      DT::dataTableOutput("main_DT", width = "100%")
-    #   bsModal(
-    #     "selected_row_modal",
-    #     "Shipwreck Info",
-    #     trigger = "main_DT_cell_clicked",
-    #     size = "large",
-    #     uiOutput("modal_body")
-    #   ),
-    #   uiOutput("the_modal_call")
-    ),
-    p()
+    # DT::dataTableOutput("main_DT", width = "100%")
+    tabsetPanel(
+      tabPanel("Table of Mines",
+               DT::dataTableOutput(
+                 "main_DT")),
+      tabPanel("Summary Charts",
+               fluidRow(
+                column(uiOutput("groupby"), width = 4),
+                column(uiOutput("countby"), width = 4),
+                column(uiOutput("stackby"), width = 4)
+               ),
+               fluidRow(
+                column(width=1),
+                column(highchartOutput("chart",height = "800px"),width=10),
+                column(width=1)
+               )
+              )  
+    )
   )
 )
