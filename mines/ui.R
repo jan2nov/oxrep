@@ -2,6 +2,7 @@ library("DT")
 library("shinyBS")
 library("leaflet")
 library("shinyjs")
+library("highcharter")
 
 appCSS <- "
 #loading-content {
@@ -44,7 +45,9 @@ shinyUI(
     tabsetPanel(
       tabPanel("Table of Mines",
                DT::dataTableOutput(
-                 "main_DT")),
+                 "main_DT"),
+               uiOutput("the_modal_call")
+               ),
       tabPanel("Summary Charts",
                fluidRow(
                 column(uiOutput("groupby"), width = 4),

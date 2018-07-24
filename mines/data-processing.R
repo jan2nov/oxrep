@@ -57,6 +57,11 @@ metals <- dt_main_data %>%
 metals_name <- c("Gold", "Silver", "Lead", "Copper", "Tin", "Iron", "Mercury/Cinnabar", "Zinc", "Other")
 # metals <- gsub("^.*?metalMined","",metals)
 metals_choices <- setNames(metals, metals_name)
+technique <- dt_main_data %>% 
+  select(+contains("technique")) %>% 
+  colnames()
+technique_name <- c("Opencast", "Underground", "Hydraulic", "Hushing", "Ground Sluicing", "Ruina Montium", "Rake Comp", "Gold Washing", "Other")
+tehcnique_choices <- setNames(technique,technique_name)
 
 #many missing dates on the mines set the NA to -999 to 999
 nr_dates_missing <- display_main_data %>% filter(is.na(notBeforeOpeningDate)
@@ -82,21 +87,20 @@ display_tbl_names <- c("Mine site",
                        "Region",
                        metals_name)
 
+## change tto logical values
 tick_columns <- metals
-
 display_main_data <- display_main_data %>%
-  mutate_at(vars(one_of(tick_columns)), funs(plyr::mapvalues(
-    .,
-    from = c("0", "1", "", NA),
-    to = c(FALSE, TRUE, FALSE, FALSE)
-  ))) %>%
+  mutate_at(vars(one_of(tick_columns)), funs(as.logical))
+tick_columns <- technique
+display_main_data <- display_main_data %>%
   mutate_at(vars(one_of(tick_columns)), funs(as.logical))
 
 
 ## charts utils
-choices_group <- list("Country" = "country", "Province" = "province")
+choices_group <- list("Country" = "country", "Province" = "province", "Region" = "region", "Metals" = "metals")
 choices_count <- c("Metals", "Mining Techniques", "Number of Mines")
-choices_stack <- list("Percent" = "percent", "Number of Mines" = "normal")
+# choices_count <- c("Metals", "Number of Mines")
+choices_stack <- list("Percent" = "percent", "Number of Sources" = "normal")
 list_ancientnames <- unique(display_main_data$ancientName)
 list_country <- unique(display_main_data$country)
 list_region <- unique(display_main_data$region)

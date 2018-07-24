@@ -14,7 +14,6 @@ library("sf")
 library("readxl")
 library("openxlsx")
 library("httr")
-library("highcharter")
 library("htmlwidgets")
 
 #helping function for display data
@@ -45,7 +44,7 @@ source("data-processing.R", local = TRUE)
 source("map_tools.R", local = TRUE)
 
 # Define server logic
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
   
   output$text_total_nr <- renderUI({
 
@@ -71,6 +70,7 @@ shinyServer(function(input, output) {
       total_observations_dt_main_data,
       " mines in the database."
     )
+    
   })
     
   output$text_missing_nr <- renderUI({
@@ -129,6 +129,14 @@ shinyServer(function(input, output) {
         leaflet() %>%
         addProviderTiles(providers$Esri.WorldShadedRelief) %>%
       addMarkers(
+        popup = ~ map_point_labeller(
+          site,
+          province,
+          country,
+          region,
+          notBeforeOpeningDate,
+          notAfterClosingDate
+        ),
         icon = makeIcon(
           "icons/mine.png",
           iconWidth = 18,
@@ -207,5 +215,59 @@ shinyServer(function(input, output) {
   }, server = FALSE)
   
   source("charts.R", local = TRUE)
+ 
+  observeEvent(input$main_DT_cell_clicked,
+               {
+                 info <- input$main_DT_cell_clicked
+                 if (is.null(info$value) || info$col >= 1) {
+                   return()
+                 } else {
+                   selected_row <- dt_main_data[info$row,]
+                    toggleModal(session, "selected_row_modal", toggle = "toggle")
+                 }
+               })
   
+  modal_row_data <- eventReactive(input$main_DT_cell_clicked,
+                                  {
+                                    info <- input$main_DT_cell_clicked
+                                    
+                                    display_main_data <- filter_time_data(display_main_data,
+                                                                            input$timeperiod_data[1],
+                                                                            input$timeperiod_data[2])
+                                    #filter data by metals
+                                    selected_metals <- input$metals_mined
+                                    if (!is.null(selected_metals)) {
+                                      display_main_data <- filter_data(display_main_data,selected_metals)
+                                    }
+                                    selected_row <- display_main_data[info$row,]
+                                    selected_row
+                                  })
+  
+   
+  output$modal_body <- renderUI({
+     tabsetPanel(
+                 tabPanel("Summary tab",
+                          print("info")
+                          ),
+                 tabPanel("Associated Features tab",
+                          print("fea")
+                          ),
+                 tabPanel("Associated Objects tab",
+                          print("obj")
+                 )
+                 )
+  })
+  
+  output$the_modal_call <- renderUI({
+    modal_row_data <- modal_row_data()
+  
+    bsModal(
+      "selected_row_modal",
+      modal_row_data$site,
+      trigger = "main_DT_cell_clicked",
+      size = "large",
+      uiOutput("modal_body")
+    )
+  })
+ 
 })

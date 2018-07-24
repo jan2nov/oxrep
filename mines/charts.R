@@ -29,31 +29,40 @@ stacked_hc_chart <- function(data = NA,
     hc_legend(reversed = TRUE)
 }
 
-
 output$groupby <- renderUI({
   selectInput(
     "by_group",
     label = "Group by",
     choices = choices_group
+    # selected = choices_group[1]
   )
 })
+
 output$countby <- renderUI({
+  req(input$by_group)
+  if (input$by_group == "metals") {
+    return()
+  }
+
   selectInput(
     "count_by",
     label = "Count by",
-    choices = choices_count,
-    selected = choices_count[1]
+    choices = choices_count
+    # selected = choices_count[1]
   )
 })
 
 output$stackby <- renderUI({
-  if (input$count_by == "Number of Mines") {
+  req(input$by_group)
+  req(input$count_by)
+  if (input$count_by == "Number of Mines" & input$by_group!="metals") {
     return()
   }
   selectInput(
     "stack_by",
     label = "Stack by",
     choices = choices_stack
+    # selected = "percent"
   )
 })
 
@@ -74,8 +83,47 @@ output$chart <- renderHighchart({
         display_main_data <- filter_data(display_main_data,selected_metals)
       }
   
-    print(input$count_by)
-    print(input$by_group)
+
+    print(paste(input$by_group, input$count_by, input$stack_by))
+    req(input$by_group)
+    switch(input$by_group, 
+           "metals" = {
+             switch (input$stack_by,
+                     "percent" = {
+                       desired_columns <- metals
+                       data_to_display <- select(display_main_data,desired_columns) %>% 
+                         summarise_all(funs(sum(.,na.rm=TRUE))) %>%
+                         as.data.frame() 
+                       data_to_display[is.na(data_to_display)] <- "Unspecified"
+                       colnames(data_to_display) <- metals_name
+                       data_to_display <- data.frame(Metals = metals_name, "Number of Mines" = t(data_to_display),row.names = NULL, check.names = FALSE)
+                       highchart() %>% 
+                         hc_chart(type = "pie") %>% 
+                         hc_add_series_labels_values(labels = data_to_display$Metals, values = data_to_display$`Number of Mines`)%>%    
+                         
+                         hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, shared = TRUE, table = TRUE,
+                                    pointFormat = paste('<b>: {point.percentage:.1f}&#8239;%</b>')
+                         )
+                     },
+                     {        
+             desired_columns <- metals
+             data_to_display <- select(display_main_data,desired_columns) %>% 
+               summarise_all(funs(sum(.,na.rm=TRUE))) %>%
+               as.data.frame() 
+             data_to_display[is.na(data_to_display)] <- "Unspecified"
+             colnames(data_to_display) <- metals_name
+             data_to_display <- data.frame(Metals = metals_name, "Number of Mines" = t(data_to_display),row.names = NULL, check.names = FALSE)
+             stacked_hc_chart(
+               data = data_to_display,
+               categories_column = "Metals",
+               measure_columns = "Number of Mines",
+               ordering_function = var
+             )
+                     }
+             )
+           },
+           {
+             req(input$count_by)
     switch(input$count_by,
          "Number of Mines" = {
                   data_to_display <- display_main_data %>% 
@@ -83,45 +131,52 @@ output$chart <- renderHighchart({
                     select_(input$by_group) %>% 
                     count() %>% as.data.frame()
                   data_to_display[is.na(data_to_display),input$by_group] <- "Unspecified"
+                  colnames(data_to_display) <- c(input$by_group, "Number of Mines")
                   stacked_hc_chart(
                     data = data_to_display,
                     categories_column = input$by_group,
-                    measure_columns = "n",
+                    measure_columns = "Number of Mines",
                     ordering_function = var
                   ) %>%  hc_yAxis(minTickInterval = 1, minRange = 4, min = 0) %>% 
                         hc_chart(zoomType = "x", panning = TRUE, panKey = 'shift')
          },
-         {
-           desired_columns <- c(input$by_group,
-                                metals
-                                )
-           
+         "Metals" = {
+           desired_columns <- c(input$by_group, metals)
            data_to_display <- select(display_main_data,desired_columns) %>% 
-             group_by_(input$by_group) %>% 
-             summarise_all(funs(sum)) %>% as.data.frame()
-           # dummy_count <- seq(1:length(data_to_display$n))
-           # dummy_count2 <- seq(1:length(data_to_display$n))
-           # data_to_display <- cbind(data_to_display,dummy_count)
-           # data_to_display <- cbind(data_to_display,dummy_count2)
+             group_by_(input$by_group) %>%
+             summarise_all(funs(sum(.,na.rm=TRUE))) %>% 
+             as.data.frame()
            data_to_display[is.na(data_to_display)] <- "Unspecified"
-           
+           colnames(data_to_display) <- c(input$by_group, metals_name)
+           total_sum_per_metal <- colSums(data_to_display[2:ncol(data_to_display)])
+           metal_occurrence <- names(total_sum_per_metal[unname(total_sum_per_metal) != 0 ])
            stacked_hc_chart(
              data = data_to_display,
              categories_column = input$by_group,
-             measure_columns = metals,
+             measure_columns = metal_occurrence,
              stacking_type = input$stack_by,
              ordering_function = var
            ) %>%
              hc_yAxis(minTickInterval = 1, minRange = 4, min = 0)
-           # keyword <- colnames(select(display_main_data,starts_with("metalMin")))
-           # find <- c("country",
-           #           colnames(select(display_main_data,starts_with("metalMin"))))
-           # data_to_display <- filter(display_main_data, metals == input$countby) %>%
-           #   group_by_(input$by_group) %>%
-           #   select_(input$by_group, "keywrd") %>%
-           #   count(keywrd) %>%
-           #   spread(keywrd, n) %>%
-           #   as.data.frame()
+         },
+         "Mining Techniques" = {
+           desired_columns <- c(input$by_group, technique)
+           data_to_display <- select(display_main_data,desired_columns) %>% 
+             group_by_(input$by_group) %>%
+             summarise_all(funs(sum(.,na.rm=TRUE))) %>% 
+             as.data.frame()
+           data_to_display[is.na(data_to_display)] <- "Unspecified"
+           colnames(data_to_display) <- c(input$by_group, technique_name)
+           total_sum_per_technique <- colSums(data_to_display[2:ncol(data_to_display)])
+           technique_occurrence <- names(total_sum_per_technique[unname(total_sum_per_technique) != 0 ])
+           stacked_hc_chart(
+             data = data_to_display,
+             categories_column = input$by_group,
+             measure_columns = technique_occurrence,
+             stacking_type = input$stack_by,
+             ordering_function = var
+           ) %>%
+             hc_yAxis(minTickInterval = 1, minRange = 4, min = 0)
          }
-    )
+    )})
 })
