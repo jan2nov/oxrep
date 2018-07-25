@@ -84,7 +84,7 @@ output$chart <- renderHighchart({
       }
   
 
-    print(paste(input$by_group, input$count_by, input$stack_by))
+    # print(paste(input$by_group, input$count_by, input$stack_by))
     req(input$by_group)
     switch(input$by_group, 
            "metals" = {

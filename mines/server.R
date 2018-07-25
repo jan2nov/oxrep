@@ -242,12 +242,11 @@ shinyServer(function(input, output, session) {
                                     selected_row <- display_main_data[info$row,]
                                     selected_row
                                   })
-  
-   
+  source("modal_summary_tab.R", local = TRUE)$value
   output$modal_body <- renderUI({
      tabsetPanel(
                  tabPanel("Summary tab",
-                          print("info")
+                          uiOutput("modal_summaryTab")
                           ),
                  tabPanel("Associated Features tab",
                           print("fea")

@@ -1,3 +1,18 @@
+mines_table_labels <- read_csv("data/mines-table-labels.csv")
+colnames(mines_table_labels) <- tolower(make.names(colnames(mines_table_labels)))
+
+mines_table_labels <- mines_table_labels %>%
+  mutate(display.name = ifelse(is.na(display.name), data.name , display.name)) %>%
+  mutate(
+    display.name = gsub('([[:upper:]])', ' \\1', display.name),
+    display.name = gsub(
+      "(^|[[:space:]])([[:alpha:]])",
+      "\\1\\U\\2",
+      display.name,
+      perl = TRUE
+    ))
+
+
 ### =========== Connect to database =============
 ### =============================================
 oxrep_db <- dbPool(
@@ -69,10 +84,10 @@ nr_dates_missing <- display_main_data %>% filter(is.na(notBeforeOpeningDate)
                                                 | is.na(notBeforeClosingDate)
                                                 | is.na(notAfterClosingDate)) %>% nrow()
 
-display_main_data[is.na(display_main_data$notBeforeOpeningDate),"notBeforeOpeningDate"] <- -999
-display_main_data[is.na(display_main_data$notAfterOpeningDate),"notAfterOpeningDate"] <- -999
-display_main_data[is.na(display_main_data$notBeforeClosingDate),"notBeforeClosingDate"] <- 999
-display_main_data[is.na(display_main_data$notAfterClosingDate),"notAfterClosingDate"] <- 999
+display_main_data[is.na(display_main_data$notBeforeOpeningDate),"notBeforeOpeningDate"] <- -1000
+display_main_data[is.na(display_main_data$notAfterOpeningDate),"notAfterOpeningDate"] <- -1000
+display_main_data[is.na(display_main_data$notBeforeClosingDate),"notBeforeClosingDate"] <- 1000
+display_main_data[is.na(display_main_data$notAfterClosingDate),"notAfterClosingDate"] <- 1000
 
 display_tbl_labels <- c("site",
                        "ancientName",
