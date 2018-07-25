@@ -12,6 +12,19 @@ mines_table_labels <- mines_table_labels %>%
       perl = TRUE
     ))
 
+features_table_labels <- read_csv("data/features-table-labels.csv")
+colnames(features_table_labels) <- tolower(make.names(colnames(features_table_labels)))
+features_table_labels <- features_table_labels %>%
+  mutate(display.name = ifelse(is.na(display.name), data.name , display.name)) %>%
+  mutate(
+    display.name = gsub('([[:upper:]])', ' \\1', display.name),
+    display.name = gsub(
+      "(^|[[:space:]])([[:alpha:]])",
+      "\\1\\U\\2",
+      display.name,
+      perl = TRUE
+    ))
+feature_render_columns <- c("feature")
 
 ### =========== Connect to database =============
 ### =============================================
@@ -35,6 +48,12 @@ dt_main_data <- {
   collect()
 }
 
+dt_feature_data <- {
+  feature <- oxrep_db %>%
+  tbl("MineFeatures") %>%
+  collect()
+}
+
 # set chars to numeric
 dt_main_data <- dt_main_data %>%
   mutate(latitude = as.numeric(latitude),
@@ -50,10 +69,11 @@ total_observations_dt_main_data <- nrow(dt_main_data)
 ### =========== Display version of tables
 
 ## Display version omits IDs
-display_main_data <- dt_main_data %>%
+display_main_data <- dt_main_data[2:ncol(dt_main_data)] %>%
   select(-contains("ID")) %>%
   # select(display_main_label_df$data.name) %>%
   collect()
+display_main_data <- cbind(dt_main_data[1],display_main_data)
 
 ### =========== Replace empty strings with NA
 display_main_data[display_main_data == ""] <- NA

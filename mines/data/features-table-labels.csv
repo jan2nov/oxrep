@@ -1,0 +1,9 @@
+Data Name,Display Name,Label for null fields,exclude,Main table,Tick Label,Modal window 1 (Summary tab),Modal window 2 (Associated Features tab),Modal window 3 (Associated Objects tab),Sub tab (level down),Notes
+featureName,Feature Name ,not specified,,,,,Y,,Associated Features Tab,
+featureType,Feature Type,not specified,,,,,Y,,Associated Features Tab,
+dimensions,Dimensions,not specified,,,,,Y,,Associated Features Tab,
+length,Length,not specified,,,,,Y,,Associated Features Tab,
+volume,Volume,not specified,Y,,,,,,Associated Features Tab,
+description,Description,none,,,,,Y,,Associated Features Tab,
+notes,Notes,none,,,,,Y,,Associated Features Tab,
+pubRef,References,none,,,,,Y,,Associated Features Tab,

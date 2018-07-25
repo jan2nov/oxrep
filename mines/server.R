@@ -46,6 +46,9 @@ source("map_tools.R", local = TRUE)
 # Define server logic
 shinyServer(function(input, output, session) {
   
+  source("modal_summary_tab.R", local = TRUE)$value
+  source("modal_associated_features_tab.R", local = TRUE)$value
+  
   output$text_total_nr <- renderUI({
 
     #time period selection
@@ -230,7 +233,6 @@ shinyServer(function(input, output, session) {
   modal_row_data <- eventReactive(input$main_DT_cell_clicked,
                                   {
                                     info <- input$main_DT_cell_clicked
-                                    
                                     display_main_data <- filter_time_data(display_main_data,
                                                                             input$timeperiod_data[1],
                                                                             input$timeperiod_data[2])
@@ -242,14 +244,14 @@ shinyServer(function(input, output, session) {
                                     selected_row <- display_main_data[info$row,]
                                     selected_row
                                   })
-  source("modal_summary_tab.R", local = TRUE)$value
+  
   output$modal_body <- renderUI({
      tabsetPanel(
                  tabPanel("Summary tab",
                           uiOutput("modal_summaryTab")
                           ),
                  tabPanel("Associated Features tab",
-                          print("fea")
+                          uiOutput("modal_featureTab")
                           ),
                  tabPanel("Associated Objects tab",
                           print("obj")

@@ -17,8 +17,6 @@ text-align: center;
 color: #000000;
 }
 "
-
-
 # load.fontawesome()
 # Define UI for application that draws a histogram
 shinyUI(
@@ -26,8 +24,12 @@ shinyUI(
      inlineCSS(appCSS),
      theme = "animate.min.css",
      useShinyjs(),
+     #for the circles in the table
      includeScript('www/fontawesome.js'),
-    #for the circles in the table
+     #for the modal window size
+     tags$head(tags$style(HTML(
+       '.modal-lg {width: 85%;}'
+     ))),
     uiOutput("timeperiod_main_DT_UI"),
     p(),
     uiOutput("text_total_nr"),
@@ -56,7 +58,7 @@ shinyUI(
                ),
                fluidRow(
                 column(width=1),
-                column(highchartOutput("chart",height = "800px"),width=10),
+                column(highchartOutput("chart",height = "600px"),width=10),
                 column(width=1)
                )
               )  

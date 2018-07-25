@@ -87,14 +87,13 @@ output$renderTable_metals <- renderTable({
 width = '100%', align = 'l',
 na = '-')
 
-output$renderTable_descr <- renderTable({
+output$renderTable_descriptions <- renderTable({
   modal_row_data <- modal_row_data()
   modal_row_data %>%
     select(description) %>%
     info_renderTable()
 },
-width = '100%', align = 'l',
-)
+width = '100%', align = 'l')
 
 output$renderTable_ref <- renderTable({
   modal_row_data <- modal_row_data()
@@ -102,8 +101,7 @@ output$renderTable_ref <- renderTable({
     select(references) %>%
     info_renderTable()
 },
-width = '100%', align = 'l',
-)
+width = '100%', align = 'l')
 
 output$renderTable_notes <- renderTable({
   modal_row_data <- modal_row_data()
@@ -111,8 +109,7 @@ output$renderTable_notes <- renderTable({
     select(notes) %>%
     info_renderTable()
 },
-width = '100%', align = 'l',
-)
+width = '100%', align = 'l')
 
 output$renderTable_geology <- renderTable({
   modal_row_data <- modal_row_data()
@@ -120,8 +117,7 @@ output$renderTable_geology <- renderTable({
     select(geology) %>%
     info_renderTable()
 },
-width = '100%', align = 'l',
-)
+width = '100%', align = 'l')
 
 output$renderTable_deposit <- renderTable({
   modal_row_data <- modal_row_data()
@@ -129,8 +125,7 @@ output$renderTable_deposit <- renderTable({
     select(depositType) %>%
     info_renderTable()
 },
-width = '100%', align = 'l',
-)
+width = '100%', align = 'l')
 
 output$renderTable_explo <- renderTable({
   modal_row_data <- modal_row_data()
@@ -138,8 +133,7 @@ output$renderTable_explo <- renderTable({
     select(exploitationType) %>%
     info_renderTable()
 },
-width = '100%', align = 'l',
-)
+width = '100%', align = 'l')
 
 output$renderTable_technique <- renderTable({
   modal_row_data <- modal_row_data()
@@ -147,8 +141,7 @@ output$renderTable_technique <- renderTable({
     select(technique) %>%
     info_renderTable()
 },
-width = '100%', align = 'l',
-na = '-')
+width = '100%', align = 'l', na = '-')
 
 output$summary_leaflet_map <- renderLeaflet({
   modal_row_data <- modal_row_data()
@@ -200,11 +193,13 @@ output$modal_summaryTab <- renderUI({
     ),
     tableOutput("renderTable_metals"),
     tableOutput("renderTable_technique"),
+    fluidRow(
+      column(tableOutput("renderTable_geology"),width=6),
+      column(tableOutput("renderTable_deposit"), width=3),
+      column(tableOutput("renderTable_explo"), width=3)
+    ),
     tableOutput("renderTable_descriptions"),
-    tableOutput("renderTable_ref"),
     tableOutput("renderTable_notes"),
-    tableOutput("renderTable_geology"),
-    tableOutput("renderTable_deposit"),
-    tableOutput("renderTable_explo")
+    tableOutput("renderTable_ref")
   )
 })
