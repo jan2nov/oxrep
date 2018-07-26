@@ -48,6 +48,7 @@ shinyServer(function(input, output, session) {
   
   source("modal_summary_tab.R", local = TRUE)$value
   source("modal_associated_features_tab.R", local = TRUE)$value
+  source("modal_associated_objects_tab.R", local = TRUE)$value
   
   output$text_total_nr <- renderUI({
 
@@ -254,7 +255,7 @@ shinyServer(function(input, output, session) {
                           uiOutput("modal_featureTab")
                           ),
                  tabPanel("Associated Objects tab",
-                          print("obj")
+                          uiOutput("modal_objectsTab")
                  )
                  )
   })

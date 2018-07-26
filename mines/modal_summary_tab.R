@@ -39,7 +39,7 @@ output$summary_timeline <- renderPlot({
   modal_row_data <- modal_row_data()
   year_min <- modal_row_data$notBeforeOpeningDate - 500
   year_max <- modal_row_data$notBeforeClosingDate + 500
-  set_break <- (abs(year_min)+abs(year_max))/10
+  set_break <- floor((abs(year_min)+abs(year_max))/10)
   
   gg_timeline_plot(
     start = modal_row_data$notBeforeOpeningDate,

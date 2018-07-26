@@ -29,8 +29,9 @@ output$render_features <- renderTable({
   modal_row_data <- modal_row_data()
   table_to_render <- filter(dt_feature_data, mineID==modal_row_data$mineID)
   table_to_render %>%
-    select() %>%
-    info_renderTable()
+     select("featureName", "featureType", "dimensions", "length", "description", "notes", "pubRef") %>%
+     info_renderTable_features()
+  # table_to_render
 })
 
 output$modal_featureTab <- renderUI({

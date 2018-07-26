@@ -26,6 +26,22 @@ features_table_labels <- features_table_labels %>%
     ))
 feature_render_columns <- c("feature")
 
+
+objects_table_labels <- read_csv("data/objects-table-labels.csv")
+colnames(objects_table_labels) <- tolower(make.names(colnames(objects_table_labels)))
+
+objects_table_labels <- objects_table_labels %>%
+  mutate(display.name = ifelse(is.na(display.name), data.name , display.name)) %>%
+  mutate(
+    display.name = gsub('([[:upper:]])', ' \\1', display.name),
+    display.name = gsub(
+      "(^|[[:space:]])([[:alpha:]])",
+      "\\1\\U\\2",
+      display.name,
+      perl = TRUE
+    ))
+
+
 ### =========== Connect to database =============
 ### =============================================
 oxrep_db <- dbPool(
@@ -54,6 +70,14 @@ dt_feature_data <- {
   collect()
 }
 
+dt_objects_data <- {
+  feature <- oxrep_db %>%
+    tbl("MineFinds") %>%
+    collect()
+}
+
+
+
 # set chars to numeric
 dt_main_data <- dt_main_data %>%
   mutate(latitude = as.numeric(latitude),
@@ -77,6 +101,8 @@ display_main_data <- cbind(dt_main_data[1],display_main_data)
 
 ### =========== Replace empty strings with NA
 display_main_data[display_main_data == ""] <- NA
+dt_feature_data[dt_feature_data == ""] <- NA
+dt_objects_data[dt_objects_data == ""] <- NA
 
 #delete the data with missing coordinates 
 #what about the locations 0,0?

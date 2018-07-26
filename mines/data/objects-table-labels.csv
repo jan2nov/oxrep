@@ -1,0 +1,6 @@
+Data Name,Display Name,Label for null fields,exclude,Main table,Tick Label,Modal window 1 (Summary tab),Modal window 2 (Associated Features tab),Modal window 3 (Associated Objects tab),Sub tab (level down),Notes
+type,Find Type,not specified,,,,,,Y,Associated Objects tab,
+notBeforeFindDate,Date (After),-,,,,,,Y,Associated Objects tab,
+notAfterFindDate,Date (Before),-,,,,,,Y,Associated Objects tab,
+description,Description,none,,,,,,Y,Associated Objects tab,
+notes,Notes,none,,,,,,Y,Associated Objects tab,
