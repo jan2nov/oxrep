@@ -50,6 +50,40 @@ shinyServer(function(input, output, session) {
   source("modal_associated_features_tab.R", local = TRUE)$value
   source("modal_associated_objects_tab.R", local = TRUE)$value
   
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste("OxRep-Mines", ".xlsx", sep = "")
+    },
+    content = function(file) {
+
+    #filter data by metals
+      selected_metals <- input$metals_mined
+      if (!is.null(selected_metals)) {
+        display_main_data <- filter_data(display_main_data,selected_metals)
+      }
+    
+      display_main_data <- filter_time_data(display_main_data,
+                                            input$timeperiod_data[1],
+                                            input$timeperiod_data[2])
+      
+      display_main_data <- display_main_data %>% select(display_tbl_labels)
+      
+      nice_col_headings <-
+        plyr::mapvalues(
+          colnames(display_main_data),
+          from = mines_table_labels$data.name,
+          to = mines_table_labels$display.name,
+          warn_missing = FALSE
+        ) %>%
+        tools::toTitleCase() %>%
+        trimws()
+      
+      write.xlsx(display_main_data %>%
+                   setNames(nice_col_headings), file)
+    }
+  )
+  
+  
   output$text_total_nr <- renderUI({
 
     #time period selection

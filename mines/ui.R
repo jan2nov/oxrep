@@ -37,6 +37,8 @@ shinyUI(
     uiOutput("text_missing_nr"),
     p(),
     uiOutput("metals_mined_UI"),
+    downloadButton("downloadData", "Download Table"),
+    p(),
     fluidRow(
       column(width = 1),
       column(leafletOutput("overview_map"), width = 10),

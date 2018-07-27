@@ -78,11 +78,32 @@ output$renderTable_locInfo <- renderTable({
 width = '100%', align = 'l',
 na = 'missing')
 
-output$renderTable_metals <- renderTable({
+output$renderTable_metals <- DT::renderDataTable({
   modal_row_data <- modal_row_data()
-  modal_row_data %>%
-    select(metals) %>%
-    info_renderTable()
+  test <- modal_row_data %>%
+    select(metals)
+    # info_renderTable()
+  datatable(data = test,rownames = FALSE, colnames = metals_name, 
+            options=list(
+              ordering = FALSE,
+              dom= 't',
+              rowCallback = htmlwidgets::JS(
+    "function(row, data, rowi) {
+          data.forEach(function(d,i) {
+          if(typeof(d) === 'boolean') {
+          $($('td', row)[i]).html(
+          [
+          '<center><i class=\\'',
+          d ? 'fa fa-circle' : 'fa fa-circle-o',
+          '\\'>',
+          '</i></center>'
+          ].join('')
+          )
+          }
+          })
+          }"
+  ) # rowcallback)
+  ))
 },
 width = '100%', align = 'l',
 na = '-')
@@ -135,11 +156,31 @@ output$renderTable_explo <- renderTable({
 },
 width = '100%', align = 'l')
 
-output$renderTable_technique <- renderTable({
+output$renderTable_technique <- DT::renderDataTable({
   modal_row_data <- modal_row_data()
-  modal_row_data %>%
-    select(technique) %>%
-    info_renderTable()
+  test <- modal_row_data %>%
+    select(technique)
+  datatable(data = test,rownames = FALSE, colnames = technique_name, 
+            options=list(
+              ordering = FALSE,
+              dom= 't',
+              rowCallback = htmlwidgets::JS(
+                "function(row, data, rowi) {
+          data.forEach(function(d,i) {
+          if(typeof(d) === 'boolean') {
+          $($('td', row)[i]).html(
+          [
+          '<center><i class=\\'',
+          d ? 'fa fa-circle' : 'fa fa-circle-o',
+          '\\'>',
+          '</i></center>'
+          ].join('')
+          )
+          }
+          })
+          }"
+              ) # rowcallback)
+            ))
 },
 width = '100%', align = 'l', na = '-')
 
@@ -191,8 +232,9 @@ output$modal_summaryTab <- renderUI({
       ),
       column(leafletOutput("summary_leaflet_map"),width = 4)
     ),
-    tableOutput("renderTable_metals"),
-    tableOutput("renderTable_technique"),
+    # tableOutput("renderTable_metals"),
+    DT::dataTableOutput("renderTable_metals"),
+    DT::dataTableOutput("renderTable_technique"),
     fluidRow(
       column(tableOutput("renderTable_geology"),width=6),
       column(tableOutput("renderTable_deposit"), width=3),
