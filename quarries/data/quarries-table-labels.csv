@@ -1,0 +1,27 @@
+Data Name,Display Name,Label for null fields,exclude,Main table,Tick Label,Modal window 1 (Summary tab),Sub tab (level down)
+name,Quarry Site,not specified,,Y,,Y,Summary tab
+province,Province,not specified,,Y,,Y,Summary tab
+country,Country,not specified,,Y,,Y,Summary tab
+latitude,Latitude,-,,,,Y,Summary tab
+longitude,Longitude,-,,,,Y,Summary tab
+coordinateAccuracy,Coordinate Accuracy,not specified,,,,Y,Summary tab
+locationDataSource,Location Data Source,not specified,Y,,,,
+marble,Ma,,,Y,Y,Y,Summary tab
+quarrycolouredMarble,CMa,,,Y,Y,Y,Summary tab
+quarryLimestone,Ls,,,Y,Y,Y,Summary tab
+quarryColouredLimestone,CLs,,,Y,Y,Y,Summary tab
+quarrySandstone,Ss,,,Y,Y,Y,Summary tab
+quarryGranite,Gr,,,Y,Y,Y,Summary tab
+quarryGypsum,Gyp,,,Y,Y,Y,Summary tab
+quarryTravertine,Tr,,,Y,Y,Y,Summary tab
+quarryAlabaster,Ala,,,Y,Y,Y,Summary tab
+quarrySchist,Sch,,,Y,Y,Y,Summary tab
+quarryBasalt,Bs,,,Y,Y,Y,Summary tab
+quarryPorphyry,Por,,,Y,Y,Y,Summary tab
+quarryTuff,Tf,,,Y,Y,Y,Summary tab
+quarryQuartzite,Qz,,,Y,Y,Y,Summary tab
+quarryConglomerate,Cng,,,Y,Y,Y,Summary tab
+quarryLava,Lv,,,Y,Y,Y,Summary tab
+locationNotes,Location Notes,none,,,,Y,Summary tab
+materialNotes,Material Notes,none,,Y,,Y,Summary tab
+quarryReferences,Bibliography,none,,,,Y,Summary tab

@@ -44,15 +44,21 @@ objects_table_labels <- objects_table_labels %>%
 
 ### =========== Connect to database =============
 ### =============================================
+secure_database_details <- read_csv("data/secure-database-details.csv", locale = locale(encoding = "UTF-8"))
+username_oxrep_db <- "server.username"
+
 oxrep_db <- dbPool(
-  drv = RMySQL::MySQL(),
-  # drv = RMariaDB::MariaDB(),
+  drv = RMariaDB::MariaDB(),
   dbname = "oxrep",
   port = 3306,
-  host = "163.1.169.203",
-  user = "oerc0118",
-  # user = "shiney"
-  password = "wioPLHSAK6nxN2"
+  host = secure_database_details %>%
+    filter(property == "host") %>%
+    select(value) %>%
+    .[[1]],
+  user = secure_database_details %>%
+    filter(property == username_oxrep_db) %>%
+    select(value) %>%
+    .[[1]]
 )
 
 ### =========== Get main table =============
