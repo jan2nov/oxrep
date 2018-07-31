@@ -25,7 +25,7 @@ shinyUI(
      theme = "animate.min.css",
      useShinyjs(),
      #for the circles in the table
-     # includeScript('www/fontawesome.js'),
+     includeScript('www/fontawesome.js'),
      #for the modal window size
      tags$head(tags$style(HTML(
        '.modal-lg {width: 85%;}'
@@ -34,15 +34,37 @@ shinyUI(
     # p(),
     uiOutput("text_total_nr"),
     p(),
-    uiOutput("quarries_bar"),
+    fluidRow(
+      column(uiOutput("quarries_bar"), width = 8),
+      column(uiOutput("map_markers"), width = 4)
+    ),
+    p(),
     downloadButton("downloadData", "Download Table"),
     p(),
     fluidRow(
       column(width = 1),
-      column(leafletOutput("overview_map"), width = 10),
+      column(leafletOutput("map_view"), width = 10),
       column(width = 1)
     ),
-    DT::dataTableOutput("main_DT")
+    p(),
+    tabsetPanel(
+      tabPanel("Table of Mines",
+        DT::dataTableOutput("main_DT"),
+        uiOutput("the_modal_call")
+      ),
+      tabPanel("Summary Charts",
+               fluidRow(
+                 column(uiOutput("groupby"), width = 4),
+                 column(uiOutput("countby"), width = 4),
+                 column(uiOutput("stackby"), width = 4)
+               ),
+               fluidRow(
+                 column(width=1),
+                 column(highchartOutput("chart",height = "600px"),width=10),
+                 column(width=1)
+               )
+      )
+    )
   )
 )
 

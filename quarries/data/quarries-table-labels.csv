@@ -4,7 +4,7 @@ province,Province,not specified,,Y,,Y,Summary tab
 country,Country,not specified,,Y,,Y,Summary tab
 latitude,Latitude,-,,,,Y,Summary tab
 longitude,Longitude,-,,,,Y,Summary tab
-coordinateAccuracy,Coordinate Accuracy,not specified,,,,Y,Summary tab
+coordinatesAccuracy,Coordinate Accuracy,not specified,,,,Y,Summary tab
 locationDataSource,Location Data Source,not specified,Y,,,,
 marble,Ma,,,Y,Y,Y,Summary tab
 quarrycolouredMarble,CMa,,,Y,Y,Y,Summary tab
