@@ -1,0 +1,21 @@
+Data Name,Display Name,Label for null fields,exclude,Main table,Tick Label,Modal window 1 (Summary tab)
+site,Site,not specified,,Y,,Y
+location,Location,not specified,,,,Y
+province,Province,not specified,,Y,,Y
+country,Country,not specified,,Y,,Y
+latitude,Latitude,-,,,,Y
+longitude,Longitude,-,,,,Y
+coordinatesAccuracy,Coordinates Accuracy,not specified,,,,Y
+coordinatesAccuracy_metres,Coordinates Accuracy (m),not specified,Y,,,
+locationDataSource,Location Data Source,not specified,Y,,,
+notBeforeConstructionDate,Constructed After,-,,Y,,Y
+notAfterConstructionDate,Constructed Before,-,,Y,,Y
+notBeforeAbandonmentDate,Abandoned After,-,,Y,,Y
+notAfterAbandonmentDate,Abandoned Before,-,,Y,,Y
+countOfOilPresses,Oil Presses,not specified,,,,Y
+countOfWinePresses,Wine Presses,not specified,,,,Y
+countOfUndefinedPresses,Undefined Presses,not specified,,,,Y
+totalPresses,Number of Presses,not specified,,Y,,Y
+locationType,Location Type,not specified,Y,,,
+notes,Notes,none,,,,Y
+PressReferences,Bibliography,none,,,,Y

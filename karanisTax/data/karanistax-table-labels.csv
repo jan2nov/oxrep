@@ -1,0 +1,18 @@
+Data Name,Display Name,Label for null fields,exclude,Main table,Tick Label,Modal window 1 (Summary tab)
+payer,Payer,Unknown,,Y,,Y
+payerGreekName,Name (Greek),Unknown,,,,Y
+day,Day,-,,Y,,Y
+month,Month,-,,Y,,Y
+year,Year,-,,Y,,Y
+taxType,Tax Type,Unknown,,Y,,Y
+notBeforeTransactionDate,After,-,,Y,,Y
+notAfterTransactionDate,Before,-,,Y,,Y
+recipient,Recipient,Unknown,,Y,,Y
+recipientGreekName,Recipient Greek Name,Unknown,,,,Y
+value,Value,Unknown,,Y,,Y
+currency,Currency,Unknown,,Y,,Y
+documentID,Document,Not Specified,,,,Y
+documentName,Document Name,Not Specified,,,,Y
+documentLocation,Location,Not Specified,,,,Y
+documentArea,,Not Specified,,,,Y
+notes,,None,,,,Y
