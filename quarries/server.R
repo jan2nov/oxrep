@@ -33,7 +33,8 @@ filter_data <- function(data,data_filter){
 # disconnect from the database
 # lapply(dbListConnections(MySQL()), dbDisconnect)
 
-# source("map_tools.R", local = TRUE)
+
+source("map_tools.R", local = TRUE)
 
 # Define server logic
 shinyServer(function(input, output, session) {
@@ -91,28 +92,6 @@ shinyServer(function(input, output, session) {
   })
   
   output$map_view <- renderLeaflet({
-    
-    map_point_labeller <-
-      function(quarrySite = NA,
-               province = NA,
-               country = NA) {
-        paste0(
-          # "<p>", Name, "</p>",
-          "<p><b>Quarry Site:</b> ",
-          quarrySite,
-          "</p>",
-          "<p><b>Province:</b> ",
-          province,
-          "</p>",
-          "<p><b>Country:</b> ",
-          country,
-          "</p>"
-        )
-      }
-    
-    my_fitBounds <- function(map, bbox) {
-      fitBounds(map, bbox$xmin, bbox$ymin, bbox$xmax, bbox$ymax)
-    }
     
     # filter by stones    
     selected_quarries <- input$quarries_mined

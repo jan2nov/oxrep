@@ -103,8 +103,8 @@ display_tbl_names <- display_main_label_df %>% select(display.name)  %>% .[[1]]
 ##############################################
 
 ## charts utils
-choices_group <- list("Country" = "country", "Province" = "province")
-choices_count <- c("Quarries", "Number of Mines" )
+choices_group <- list("Country" = "country", "Province" = "province", "Quarries" = "quarries")
+choices_count <- c("Quarries", "Number of Sites" )
 choices_stack <- list("Percent" = "percent", "Number of Sources" = "normal")
 # choices_count <- c("Metals", "Number of Mines")
 

@@ -41,6 +41,8 @@ output$summary_leaflet_map <- renderLeaflet({
     leaflet() %>%
     addTiles() %>%
     addCircleMarkers(
+      lat = ~ latitude,
+      lng = ~ longitude,
       fillOpacity = 0.7,
       stroke = TRUE,
       color = "#de2d26",

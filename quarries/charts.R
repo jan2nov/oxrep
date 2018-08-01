@@ -40,22 +40,28 @@ output$groupby <- renderUI({
 
 output$countby <- renderUI({
   req(input$by_group)
-  if (input$by_group == "metals") {
+  if (input$by_group == "quarries") {
     return()
-  }
-
+    # selectInput(
+    #   "count_by",
+    #   label = "Count by",
+    #   choices = choices_group[1:2]
+    #   # selected = choices_count[1]
+    # )
+  } else {
   selectInput(
     "count_by",
     label = "Count by",
     choices = choices_count
     # selected = choices_count[1]
   )
+  }
 })
 
 output$stackby <- renderUI({
   req(input$by_group)
   req(input$count_by)
-  if (input$count_by == "Number of Mines" & input$by_group!="metals") {
+  if (input$count_by == "Number of Sites" & input$by_group!="quarries") {
     return()
   }
   selectInput(
@@ -77,10 +83,46 @@ output$chart <- renderHighchart({
     # print(paste(input$by_group, input$count_by, input$stack_by))
     req(input$by_group)
     switch(input$by_group, 
+           "quarries" = {
+             switch (input$stack_by,
+                     "percent" = {
+                       desired_columns <- unname(quarries_choices)
+                       data_to_display <- select(display_main_data,desired_columns) %>% 
+                         summarise_all(funs(sum(.,na.rm=TRUE))) %>%
+                         as.data.frame() 
+                       data_to_display[is.na(data_to_display)] <- "Unspecified"
+                       data_to_display <- cbind("Quarries",data_to_display)
+                       colnames(data_to_display) <-c("type",names(quarries_choices))
+                       # data_to_display <- data.frame(Items = names(quarries_choices), "Percent" = t(data_to_display),row.names = NULL, check.names = FALSE)
+                       stacked_hc_chart(
+                         data = data_to_display,
+                         categories_column = "type",
+                         measure_columns = names(quarries_choices),
+                         stacking_type = "percent",
+                         ordering_function = var
+                       )
+                     },
+                     {
+               desired_columns <- unname(quarries_choices)
+               data_to_display <- select(display_main_data,desired_columns) %>% 
+                 summarise_all(funs(sum(.,na.rm=TRUE))) %>%
+                 as.data.frame() 
+               data_to_display[is.na(data_to_display)] <- "Unspecified"
+               colnames(data_to_display) <- names(quarries_choices)
+               data_to_display <- data.frame(Items = names(quarries_choices), "Number of Quarry Sites" = t(data_to_display),row.names = NULL, check.names = FALSE)
+               stacked_hc_chart(
+                 data = data_to_display,
+                 categories_column = "Items",
+                 measure_columns = "Number of Quarry Sites",
+                 ordering_function = var
+               )
+                     }
+             )
+           },
          {
              req(input$count_by)
     switch(input$count_by,
-         "Number of Mines" = {
+         "Number of Sites" = {
                   data_to_display <- display_main_data %>% 
                     group_by_(input$by_group) %>% 
                     select_(input$by_group) %>% 
@@ -95,39 +137,20 @@ output$chart <- renderHighchart({
                   ) %>%  hc_yAxis(minTickInterval = 1, minRange = 4, min = 0) %>% 
                         hc_chart(zoomType = "x", panning = TRUE, panKey = 'shift')
          },
-         "Metals" = {
-           desired_columns <- c(input$by_group, metals)
+         "Quarries" = {
+           desired_columns <- c(input$by_group, unname(quarries_choices))
            data_to_display <- select(display_main_data,desired_columns) %>% 
              group_by_(input$by_group) %>%
              summarise_all(funs(sum(.,na.rm=TRUE))) %>% 
              as.data.frame()
            data_to_display[is.na(data_to_display)] <- "Unspecified"
-           colnames(data_to_display) <- c(input$by_group, metals_name)
-           total_sum_per_metal <- colSums(data_to_display[2:ncol(data_to_display)])
-           metal_occurrence <- names(total_sum_per_metal[unname(total_sum_per_metal) != 0 ])
+           colnames(data_to_display) <- c(input$by_group, names(quarries_choices))
+           total_sum_per_item <- colSums(data_to_display[2:ncol(data_to_display)])
+           item_occurrence <- names(total_sum_per_item[unname(total_sum_per_item) != 0 ])
            stacked_hc_chart(
              data = data_to_display,
              categories_column = input$by_group,
-             measure_columns = metal_occurrence,
-             stacking_type = input$stack_by,
-             ordering_function = var
-           ) %>%
-             hc_yAxis(minTickInterval = 1, minRange = 4, min = 0)
-         },
-         "Mining Techniques" = {
-           desired_columns <- c(input$by_group, technique)
-           data_to_display <- select(display_main_data,desired_columns) %>% 
-             group_by_(input$by_group) %>%
-             summarise_all(funs(sum(.,na.rm=TRUE))) %>% 
-             as.data.frame()
-           data_to_display[is.na(data_to_display)] <- "Unspecified"
-           colnames(data_to_display) <- c(input$by_group, technique_name)
-           total_sum_per_technique <- colSums(data_to_display[2:ncol(data_to_display)])
-           technique_occurrence <- names(total_sum_per_technique[unname(total_sum_per_technique) != 0 ])
-           stacked_hc_chart(
-             data = data_to_display,
-             categories_column = input$by_group,
-             measure_columns = technique_occurrence,
+             measure_columns = item_occurrence,
              stacking_type = input$stack_by,
              ordering_function = var
            ) %>%
