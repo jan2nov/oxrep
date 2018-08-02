@@ -36,32 +36,26 @@ shinyUI(
     p(),
     uiOutput("taxtype_bar"),
     p(),
-    # downloadButton("downloadData", "Download Table"),
-    # p(),
-    # fluidRow(
-    #   column(width = 1),
-    #   column(leafletOutput("map_view"), width = 10),
-    #   column(width = 1)
-    # ),
-    p()
-    # tabsetPanel(
-    #   tabPanel("Table of Oil & Wine Presses",
-    #     DT::dataTableOutput("main_DT"),
-    #     uiOutput("the_modal_call")
-    #   ),
-    #   tabPanel("Summary Charts",
-    #            fluidRow(
-    #              column(uiOutput("groupby"), width = 4),
-    #              column(uiOutput("countby"), width = 4),
-    #              column(uiOutput("stackby"), width = 4)
-    #            ),
-    #           fluidRow(
-    #                        column(width=1),
-    #                        column(highchartOutput("chart",height = "600px"),width=10),
-    #                        column(width=1)
-    #           )
-    #   )
-    # )
+    downloadButton("downloadData", "Download Table"),
+    p(),
+    tabsetPanel(
+      tabPanel("Summary Table",
+        DT::dataTableOutput("main_DT"),
+        uiOutput("the_modal_call")
+      ),
+      tabPanel("Summary Charts",
+               fluidRow(
+                 column(uiOutput("groupby"), width = 4),
+                 column(uiOutput("countby"), width = 4),
+                 column(uiOutput("stackby"), width = 4)
+               ),
+              fluidRow(
+                           column(width=1),
+                           column(highchartOutput("chart",height = "600px"),width=10),
+                           column(width=1)
+              )
+      )
+    )
   )
 )
 

@@ -24,9 +24,8 @@ source("gg_timeline_plot.R", local = TRUE)
 source("data-processing.R", local = TRUE)
 
 #helping function for display data
-filter_data <- function(data,column,data_filter){
-  data <- filter_at(data, column %in% vars(data_filter),
-                    all_vars(. == TRUE))
+filter_data <- function(data,data_filter){
+  data <- filter(data, taxType %in% data_filter)
   return(data)
 }
 filter_time_data <- function(data,start,end){
@@ -109,10 +108,10 @@ shinyServer(function(input, output, session) {
                                             input$timeperiod_data[1],
                                             input$timeperiod_data[2])
     }
-    # filter by press type    
-    selected_presses <- input$press_type
-    if (!is.null(selected_presses)) {
-      display_main_data <- filter_data(display_main_data,selected_presses)
+    # filter by tax type    
+    selected_type <- input$tax_type
+    if (!is.null(selected_type)) {
+      display_main_data <- filter_data(display_main_data,selected_type)
     }
     
     display_tbl <- display_main_data %>% 
@@ -136,33 +135,17 @@ shinyServer(function(input, output, session) {
         # scroller = TRUE,
         pageLength = 50,
         dom = 'Bfrtip',
-        buttons = c('csv', 'excel'),
-        rowCallback = htmlwidgets::JS(
-          "function(row, data, rowi) {
-          data.forEach(function(d,i) {
-          if(typeof(d) === 'boolean') {
-          $($('td', row)[i]).html(
-          [
-          '<center><i class=\\'',
-          d ? 'fa fa-circle' : 'fa fa-circle-o',
-          '\\'>',
-          '</i></center>'
-          ].join('')
-          )
-          }
-          })
-          }"
-        ) # rowcallback
+        buttons = c('csv', 'excel')
       ) # list
     ) %>%
-      formatStyle(1:2, color = "#6d9dc8", cursor = "default")
+      formatStyle(1, color = "#6d9dc8", cursor = "default")
   }, server = FALSE)
   ##################################################
   
   ################## download table ################
   output$downloadData <- downloadHandler(
     filename = function() {
-      paste("OxRep-OilWine", ".xlsx", sep = "")
+      paste("OxRep-karanisTax", ".xlsx", sep = "")
     },
     content = function(file) {
       
@@ -174,10 +157,10 @@ shinyServer(function(input, output, session) {
                                               input$timeperiod_data[1],
                                               input$timeperiod_data[2])
       }
-      # filter by press type    
-      selected_presses <- input$press_type
-      if (!is.null(selected_presses)) {
-        display_main_data <- filter_data(display_main_data,selected_presses)
+      # filter by tax type    
+      selected_type <- input$tax_type
+      if (!is.null(selected_type)) {
+        display_main_data <- filter_data(display_main_data,selected_type)
       }
       
       display_main_data <- display_main_data %>% select(display_main_label_df$data.name)
@@ -195,10 +178,10 @@ shinyServer(function(input, output, session) {
   observeEvent(input$main_DT_cell_clicked,
                {
                  info <- input$main_DT_cell_clicked
-                 if (is.null(info$value) || info$col >= 2) {
+                 if (is.null(info$value) || info$col >= 1) {
                    return()
                  } else {
-                   selected_row <- data_presses[info$row,]
+                   selected_row <- data_taxes[info$row,]
                    toggleModal(session, "selected_row_modal", toggle = "toggle")
                  }
                })
@@ -208,7 +191,7 @@ shinyServer(function(input, output, session) {
     
     bsModal(
       "selected_row_modal",
-      modal_row_data$site,
+      modal_row_data$payer,
       trigger = "main_DT_cell_clicked",
       size = "large",
       uiOutput("modal_body")
@@ -227,11 +210,12 @@ shinyServer(function(input, output, session) {
                                                                             input$timeperiod_data[1],
                                                                             input$timeperiod_data[2])
                                     }
-                                    # filter by press type    
-                                    selected_presses <- input$press_type
-                                    if (!is.null(selected_presses)) {
-                                      display_main_data <- filter_data(display_main_data,selected_presses)
+                                    # filter by tax type    
+                                    selected_type <- input$tax_type
+                                    if (!is.null(selected_type)) {
+                                      display_main_data <- filter_data(display_main_data,selected_type)
                                     }
+                                    
                                     selected_row <- display_main_data[info$row,]
                                     selected_row
                                   })

@@ -80,12 +80,16 @@ output$chart <- renderHighchart({
       display_main_data <- filter_data(display_main_data,selected_quarries)
     }
 
-    # print(paste(input$by_group, input$count_by, input$stack_by))
+    
     req(input$by_group)
+    req(input$stack_by)
+    req(input$count_by)
+    # print(paste(input$by_group, input$count_by, input$stack_by))
     switch(input$by_group, 
            "quarries" = {
-             switch (input$count_by,
-                     "Number of Sites" = {
+             req(input$count_by)
+             switch(input$count_by,
+                    "Number of Sites" = {
                        req(input$stack_by)
                        switch(input$stack_by,
                          "percent" = {
@@ -105,8 +109,8 @@ output$chart <- renderHighchart({
                              ordering_function = var
                            )
                          },
-                         {
-                           desired_columns <- unname(quarries_choices)
+                       {
+                         desired_columns <- unname(quarries_choices)
                            data_to_display <- select(display_main_data,desired_columns) %>% 
                              summarise_all(funs(sum(.,na.rm=TRUE))) %>%
                              as.data.frame() 
@@ -144,7 +148,7 @@ output$chart <- renderHighchart({
              )
            },
          {
-             req(input$count_by)
+    req(input$count_by)
     switch(input$count_by,
          "Number of Sites" = {
                   data_to_display <- display_main_data %>% 

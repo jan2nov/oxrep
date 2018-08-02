@@ -24,43 +24,12 @@ info_renderTable <- function(data, ...) {
   data
 }
 
-############### map ##################
-output$summary_leaflet_map <- renderLeaflet({
-  modal_row_data <- modal_row_data()
-  
-  centre_latitude <- modal_row_data %>%
-    select(latitude) %>%
-    .[[1]]
-  
-  centre_longitude <- modal_row_data %>%
-    select(longitude) %>%
-    .[[1]]
-  
-  modal_row_data %>%
-    collect() %>%
-    leaflet() %>%
-    addTiles() %>%
-    addCircleMarkers(
-      lat = ~ latitude,
-      lng = ~ longitude,
-      fillOpacity = 0.7,
-      stroke = TRUE,
-      color = "#756bb1",
-      weight = 2,
-      label = ~ site,
-      popup = ~ map_point_labeller(site, province, country)
-    ) %>%
-    setView(zoom = 6,
-            lat = centre_latitude,
-            lng = centre_longitude)
-})
-######################################
 
 output$renderTable_Summary <- renderTable({
   modal_row_data <- modal_row_data()
   
   modal_row_data %>%
-    select(site, location, province, country) %>%
+    select(payer, payerGreekName) %>%
     info_renderTable()
 },
 width = '100%', align = 'l', na = 'missing')
@@ -69,7 +38,7 @@ output$renderTable_location <- renderTable({
   modal_row_data <- modal_row_data()
   
   modal_row_data %>%
-    select(longitude, latitude, coordinatesAccuracy) %>%
+    select(day, month, year) %>%
     info_renderTable()
 },
 width = '100%', align = 'l', na = 'missing')
@@ -79,17 +48,17 @@ output$renderTable_timeline <- renderTable({
   modal_row_data <- modal_row_data()
   
   modal_row_data %>%
-    select(notBeforeConstructionDate, notAfterConstructionDate, notBeforeAbandonmentDate, notAfterAbandonmentDate) %>%
+    select(notBeforeTransactionDate,notAfterTransactionDate) %>%
     info_renderTable()
 },
 width = '100%', align = 'l', na = 'missing')
 
 
-output$renderTable_presses <- renderTable({
+output$renderTable_recipients <- renderTable({
   modal_row_data <- modal_row_data()
   
   modal_row_data %>%
-    select(countOfOilPresses, countOfWinePresses, countOfUndefinedPresses, totalPresses) %>%
+    select(recipient,recipientGreekName, taxType,value,currency) %>%
     info_renderTable()
 },
 width = '100%', align = 'l', na = 'missing')
@@ -107,49 +76,35 @@ output$references <- renderTable({
   modal_row_data <- modal_row_data()
   
   modal_row_data %>%
-    select(PressReferences) %>%
+    select(documentName, documentLocation,documentArea) %>%
     info_renderTable()
 },
 width = '100%', align = 'l', na = 'missing')
 
-############## timeline plot ###################
-output$summary_timeline <- renderPlot({
+output$taxtype <- renderTable({
   modal_row_data <- modal_row_data()
-  year_min <- modal_row_data$notBeforeConstructionDate
-  year_max <- modal_row_data$notAfterConstructionDate
-  year_plus <- ceiling((abs(year_min)+abs(year_max))/4)
-  year_min <- year_min - year_plus
-  year_max <- year_max + year_plus
-  set_break <- floor((abs(year_min)+abs(year_max))/10)
-  print(set_break)
   
-  gg_timeline_plot(
-    start = modal_row_data$notBeforeConstructionDate,
-    end = modal_row_data$notAfterConstructionDate,
-    minyear = year_min,
-    maxyear = year_max,
-    breaks = set_break
-  )
-})
-################################################
+  modal_row_data %>%
+    select(taxType,value,currency) %>%
+    info_renderTable()
+},
+width = '100%', align = 'l', na = 'missing')
+
 
 output$modal_summaryTab <- renderUI({
   
   fluidPage(
+    tableOutput("renderTable_Summary"),
     fluidRow(
-      column(
-        br(),
-        tableOutput("renderTable_Summary"),
-        tableOutput("renderTable_location"),
-        tableOutput("renderTable_timeline"),
-        plotOutput("summary_timeline", height = "50px"),
-        tableOutput("renderTable_presses"),
-      width = 8),
-      column(leafletOutput("summary_leaflet_map"),width = 4)
+      column(p("Date: "),
+        tableOutput("renderTable_location"),width = 6),
+      column(p("Transaction Date: "),
+        tableOutput("renderTable_timeline"),width = 6)
     ),
-    p(),
-    tableOutput("notes")
-    # tableOutput("references")
+    p("Tax Roll:"),
+    tableOutput("renderTable_recipients"),
+    tableOutput("notes"),
+    tableOutput("references")
   )
   
 })
