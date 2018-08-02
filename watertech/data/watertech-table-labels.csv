@@ -1,0 +1,20 @@
+Data Name,Display Name,Label for null fields,exclude,Main table
+waterTechDocID,,,Y,
+document,Document,,,Y
+notBeforeWrittenDate,Written After,,,Y
+notAfterWrittenDate,Written Before,,,Y
+siteName,Site,,,Y
+egyptianDistrict,Area,,,Y
+numDocumentReferences,-,,Y,
+notes,Notes,,Y,
+,,,,
+,,,,
+waterTechWordID,,,Y,
+documentID,,,Y,
+line,Line,,,Y
+word,Word,,,Y
+head,Head,,,Y
+type,Type,,,Y
+description,Description,,,Y
+numberOfMachines,Number of Machines,,,Y
+notes,Notes,,Y,
