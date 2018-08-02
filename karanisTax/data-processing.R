@@ -77,9 +77,9 @@ display_main_label_df <- display_table_labels %>%
 ##############################################
 
 ## charts utils
-# choices_group <- list("Country" = "country", "Province" = "province", "Type of Press" = "press")
+choices_group <- list("Year" = "year")
 # choices_count <- c("Type of Press", "Number of Presses" )
-choices_stack <- list("Percent" = "percent", "Number of Presses" = "normal")
+choices_stack <- list("Percent" = "percent", "Number of Taxes" = "normal")
 
 ### =========== Replace empty strings with NA
 display_main_data[display_main_data == ""] <- NA

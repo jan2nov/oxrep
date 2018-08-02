@@ -45,8 +45,8 @@ shinyUI(
       ),
       tabPanel("Summary Charts",
                fluidRow(
-                 column(uiOutput("groupby"), width = 4),
-                 column(uiOutput("countby"), width = 4),
+                 # column(uiOutput("groupby"), width = 4),
+                 # column(uiOutput("countby"), width = 4),
                  column(uiOutput("stackby"), width = 4)
                ),
               fluidRow(

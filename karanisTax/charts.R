@@ -29,6 +29,15 @@ stacked_hc_chart <- function(data = NA,
     hc_legend(reversed = TRUE)
 }
 
+output$stackby <- renderUI({
+  selectInput(
+    "stack_by",
+    label = "Stack by",
+    choices = choices_stack
+    # selected = "percent"
+  )
+})
+
 output$chart <- renderHighchart({
   
   #time period selection
@@ -46,19 +55,17 @@ output$chart <- renderHighchart({
   }
                desired_columns <- c("year", "taxType")
                data_to_display <- select(display_main_data,desired_columns) %>% 
-                 group_by_("year") %>%
-                 summarise_all(funs(sum(.,na.rm=TRUE))) %>% 
-                 as.data.frame()
-               data_to_display[is.na(data_to_display)] <- "Unspecified"
-               colnames(data_to_display) <- c(input$by_group, names(choices_press_type))
-               total_sum_per_item <- colSums(data_to_display[2:ncol(data_to_display)])
-               item_occurrence <- names(total_sum_per_item[unname(total_sum_per_item) != 0 ])
+                 group_by_("year")
+               choices_actual <- unique(data_to_display$taxType)
+               data_to_display <- as.data.frame.matrix(with(data_to_display,table(year,taxType)))
+               data_to_display$year <- rownames(data_to_display)
                stacked_hc_chart(
                  data = data_to_display,
-                 categories_column = input$by_group,
-                 measure_columns = item_occurrence,
+                 categories_column = "year",
+                 measure_columns = choices_actual,
                  stacking_type = input$stack_by,
                  ordering_function = var
                ) %>%
-                 hc_yAxis(minTickInterval = 1, minRange = 4, min = 0)
+                 hc_yAxis(minTickInterval = 1, minRange = 3, min = 0) %>%
+                 hc_xAxis(title = list(text = "Year"))
 })
