@@ -44,7 +44,7 @@ objects_table_labels <- objects_table_labels %>%
 
 ### =========== Connect to database =============
 ### =============================================
-secure_database_details <- read_csv("data/secure-database-details.csv", locale = locale(encoding = "UTF-8"))
+secure_database_details <- read_csv("data/secure_details.csv", locale = locale(encoding = "UTF-8"))
 username_oxrep_db <- "server.username"
 
 oxrep_db <- dbPool(
@@ -59,6 +59,10 @@ oxrep_db <- dbPool(
     filter(property == username_oxrep_db) %>%
     select(value) %>%
     .[[1]]
+  # password = secure_database_details %>%
+  #   filter(property == "local.password") %>%
+  #   select(value) %>%
+  #   .[[1]]
 )
 
 ### =========== Get main table =============
@@ -79,6 +83,18 @@ dt_feature_data <- {
 dt_objects_data <- {
   feature <- oxrep_db %>%
     tbl("MineFinds") %>%
+    collect()
+}
+
+dt_references_data <- {
+  feature <- oxrep_db %>%
+    tbl("References") %>%
+    collect()
+}
+
+dt_pub_data <- {
+  feature <- oxrep_db %>%
+    tbl("Publications") %>%
     collect()
 }
 
@@ -109,6 +125,7 @@ display_main_data <- cbind(dt_main_data[1],display_main_data)
 display_main_data[display_main_data == ""] <- NA
 dt_feature_data[dt_feature_data == ""] <- NA
 dt_objects_data[dt_objects_data == ""] <- NA
+dt_pub_data[dt_pub_data == ""] <- NA
 
 #delete the data with missing coordinates 
 #what about the locations 0,0?
@@ -116,6 +133,10 @@ display_main_data <- display_main_data %>% filter(!is.na(longitude) | !is.na(lat
 display_main_data <-  display_main_data[display_main_data$latitude != 0 &
                       display_main_data$longitude != 0,]
 nr_missed_coord <- total_observations_dt_main_data - nrow(display_main_data)
+
+## putting (m) for coordinate accuracy
+display_main_data[!is.na(display_main_data$coordinateAccuracy),]$coordinateAccuracy  <- 
+    paste(display_main_data[!is.na(display_main_data$coordinateAccuracy),]$coordinateAccuracy,"(m)")
 
 #options and labels for metals mined
 metals <- dt_main_data %>% 

@@ -5,6 +5,8 @@ library("shinyjs")
 library("highcharter")
 
 appCSS <- "
+.leaflet-top { z-index: 999;}
+.sorting_disabled {text-align: center;}
 #loading-content {
 position: absolute;
 background: #FFFFFF;
@@ -37,6 +39,11 @@ shinyUI(
     uiOutput("text_missing_nr"),
     p(),
     uiOutput("metals_mined_UI"),
+    div(id = "loading-main-table",
+        fluidPage(
+          h2(class = "animated infinite pulse", "Loading shipwrecks database...")
+          # HTML("<img src=images/cruk-logo.png width='50%'></img>")
+        )),
     downloadButton("downloadData", "Download Table"),
     p(),
     fluidRow(

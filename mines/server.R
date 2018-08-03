@@ -55,13 +55,13 @@ shinyServer(function(input, output, session) {
       paste("OxRep-Mines", ".xlsx", sep = "")
     },
     content = function(file) {
-
-    #filter data by metals
+      
+      #filter data by metals
       selected_metals <- input$metals_mined
       if (!is.null(selected_metals)) {
         display_main_data <- filter_data(display_main_data,selected_metals)
       }
-    
+      
       display_main_data <- filter_time_data(display_main_data,
                                             input$timeperiod_data[1],
                                             input$timeperiod_data[2])
@@ -81,9 +81,7 @@ shinyServer(function(input, output, session) {
       write.xlsx(display_main_data %>%
                    setNames(nice_col_headings), file)
     }
-  )
-  
-  
+  )  
   output$text_total_nr <- renderUI({
 
     #time period selection
@@ -135,7 +133,7 @@ shinyServer(function(input, output, session) {
       max = max(display_main_data$notAfterClosingDate, na.rm = TRUE),
       value = c(
         min(display_main_data$notBeforeOpeningDate, na.rm = TRUE),
-        max(display_main_data$notBeforeClosingDate, na.rm = TRUE)
+        max(display_main_data$notAfterClosingDate, na.rm = TRUE)
       ),
       width = "100%"
     )
@@ -189,9 +187,9 @@ shinyServer(function(input, output, session) {
   
   ##table
   output$main_DT <- DT::renderDataTable({
-    # shinyjs::show(id = "loading-main-table",
-    #               anim = TRUE,
-    #               animType = "fade")
+    shinyjs::show(id = "loading-main-table",
+                  anim = TRUE,
+                  animType = "fade")
     
     #filter data by the timeline
     if (is.null(input$timeperiod_data)) {
@@ -208,6 +206,10 @@ shinyServer(function(input, output, session) {
       display_main_data <- filter_data(display_main_data,selected_metals)
     }
     
+    shinyjs::hide(id = "loading-main-table",
+                  anim = TRUE,
+                  animType = "fade")
+    
     display_tbl <- display_main_data %>% 
                    select(display_tbl_labels)
     datatable(
@@ -219,8 +221,10 @@ shinyServer(function(input, output, session) {
       escape = FALSE,
       options = list(
         columnDefs = list(list(
-          width = "80px", targets = list(0, 1, 5)
-        )),
+          width = "200px", targets = list(0)
+        ),
+          list(width = "80px", targets = list(3))
+        ),
         # columnDefs = list(list(width = "80px", targets = "_all")),
         server = FALSE,
         autoWidth = TRUE,

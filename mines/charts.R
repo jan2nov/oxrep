@@ -95,15 +95,22 @@ output$chart <- renderHighchart({
                          summarise_all(funs(sum(.,na.rm=TRUE))) %>%
                          as.data.frame() 
                        data_to_display[is.na(data_to_display)] <- "Unspecified"
-                       colnames(data_to_display) <- metals_name
-                       data_to_display <- data.frame(Metals = metals_name, "Number of Mines" = t(data_to_display),row.names = NULL, check.names = FALSE)
-                       highchart() %>% 
-                         hc_chart(type = "pie") %>% 
-                         hc_add_series_labels_values(labels = data_to_display$Metals, values = data_to_display$`Number of Mines`)%>%    
-                         
-                         hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, shared = TRUE, table = TRUE,
-                                    pointFormat = paste('<b>: {point.percentage:.1f}&#8239;%</b>')
-                         )
+                       data_to_display <- cbind("type",data_to_display)
+                       colnames(data_to_display) <- c("type",metals_name)
+                       stacked_hc_chart(
+                         data = data_to_display,
+                         categories_column = "type",
+                         measure_columns = metals_name,
+                         stacking_type = "percent",
+                         ordering_function = var
+                       )
+                       # data_to_display <- data.frame(Metals = metals_name, "Number of Mines" = t(data_to_display),row.names = NULL, check.names = FALSE)
+                       # highchart() %>% 
+                       #   hc_chart(type = "bar") %>% 
+                       #   hc_add_series_labels_values(labels = data_to_display$Metals, values = data_to_display$`Number of Mines`)%>%    
+                       #   hc_tooltip(crosshairs = TRUE, borderWidth = 5, sort = TRUE, shared = TRUE, table = TRUE,
+                       #              pointFormat = paste('<b>: {point.percentage:.1f}&#8239;%</b>')
+                       #   )
                      },
                      {        
              desired_columns <- metals
