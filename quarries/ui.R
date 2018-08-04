@@ -5,6 +5,8 @@ library("shinyjs")
 library("highcharter")
 
 appCSS <- "
+.leaflet-top { z-index: 999;}
+.sorting_disabled {text-align: center;}
 #loading-content {
 position: absolute;
 background: #FFFFFF;

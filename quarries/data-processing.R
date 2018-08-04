@@ -36,6 +36,8 @@ oxrep_db <- dbPool(
 data_quarries <- {quarries <- oxrep_db %>% tbl("Quarries") %>% collect() }
 data_countries <- {countries <- oxrep_db %>% tbl("Countries") %>% collect() } 
 data_provinces <- {provinces <- oxrep_db %>% tbl("Provinces") %>% collect() } 
+dt_references_data <- {feature <- oxrep_db %>% tbl("References") %>%  collect()}
+dt_pub_data <- {feature <- oxrep_db %>% tbl("Publications") %>% collect()}
 
 # load table labels
 display_table_labels <- read_csv("data/quarries-table-labels.csv")

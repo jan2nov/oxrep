@@ -104,7 +104,8 @@ shinyServer(function(input, output, session) {
       leaflet() %>%
       addProviderTiles(providers$Esri.WorldShadedRelief) %>%
       addTiles()
-      
+    
+      req(input$map_marker)
       switch(input$map_marker, 
         "Cluster" = { map %>% addMarkers(clusterOptions = markerClusterOptions(zoomToBoundsOnClick = TRUE),
                         popup = ~ map_point_labeller(

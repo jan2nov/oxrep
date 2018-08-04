@@ -1,3 +1,17 @@
+info_reference <- function(data) {
+  data_return <- paste0(data$author,". ",data$year,". \"",data$title,"\"") %>% as.data.frame(stringsAsFactors=FALSE)
+  row_na <- which(!is.na(data$journal))
+  data_return[row_na,] <- str_c(data_return[row_na,],paste("",data[row_na,]$journal))
+  row_na <- which(!is.na(data$issue))
+  data_return[row_na,] <- str_c(data_return[row_na,],paste0(" ",data[row_na,]$issue,","))
+  row_na <- which(!is.na(data$start))
+  data_return[row_na,] <- str_c(data_return[row_na,],paste("",data[row_na,]$start))
+  row_na <- which(!is.na(data$end))
+  data_return[row_na,] <- str_c(data_return[row_na,],paste0("-",data[row_na,]$end,"."))
+  colnames(data_return) <- "References"
+  data_return
+}
+
 info_renderTable <- function(data, ...) {
   nice_col_headings2 <-
     plyr::mapvalues(
@@ -161,10 +175,19 @@ width = '100%', align = 'l', na = 'none')
 #
 output$references <- renderTable({
   modal_row_data <- modal_row_data()
-  
-  modal_row_data %>%
-    select(quarryReferences) %>%
-    info_renderTable()
+  ref_data <- modal_row_data %>%
+    select(quarryReferences)
+  ref_data <- strsplit(ref_data$quarryReferences,";")[[1]] %>% trimws()
+  ref_data <- sapply(strsplit(ref_data, ":"), "[", 1)
+  ref_data <- filter(dt_pub_data,pubname %in% ref_data)
+  if (nrow(ref_data) != 0) {
+    info_reference(ref_data)
+  }
+  else {
+    ref_data <- modal_row_data %>%
+      select(quarryReferences) %>%
+      info_renderTable()
+  }
 },
 width = '100%', align = 'l', na = 'none')
 
