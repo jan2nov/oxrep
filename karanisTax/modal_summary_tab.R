@@ -96,12 +96,12 @@ output$modal_summaryTab <- renderUI({
   fluidPage(
     tableOutput("renderTable_Summary"),
     fluidRow(
-      column(p("Date: "),
+      column(h4("Date: "),
         tableOutput("renderTable_location"),width = 6),
-      column(p("Transaction Date: "),
+      column(h4("Transaction Date: "),
         tableOutput("renderTable_timeline"),width = 6)
     ),
-    p("Tax Roll:"),
+    h4("Tax Roll:"),
     tableOutput("renderTable_recipients"),
     tableOutput("notes"),
     tableOutput("references")

@@ -13,7 +13,7 @@ nice_col_headings <- function(data){
 
 ############### load main data ###############
 secure_database_details <- read_csv("data/secure_details.csv", locale = locale(encoding = "UTF-8"))
-username_oxrep_db <- "local.username"
+username_oxrep_db <- "server.username"
 
 oxrep_db <- dbPool(
   drv = RMariaDB::MariaDB(),
@@ -26,11 +26,11 @@ oxrep_db <- dbPool(
   user = secure_database_details %>%
     filter(property == username_oxrep_db) %>%
     select(value) %>%
-    .[[1]],
-  password = secure_database_details %>%
-    filter(property == "local.password") %>% 
-    select(value) %>%
     .[[1]]
+  # password = secure_database_details %>%
+  #   filter(property == "local.password") %>%
+  #   select(value) %>%
+  #   .[[1]]
 )
 
 data_quarries <- {quarries <- oxrep_db %>% tbl("Quarries") %>% collect() }
@@ -112,6 +112,7 @@ choices_stack <- list("Percent" = "percent", "Number of Sources" = "normal")
 
 ### =========== Replace empty strings with NA
 display_main_data[display_main_data == ""] <- NA
+dt_pub_data[dt_pub_data == ""] <- NA
 ############### close the database ###########
 poolClose(oxrep_db)
 ##############################################

@@ -5,6 +5,7 @@ library("shinyjs")
 library("highcharter")
 
 appCSS <- "
+.leaflet-top { z-index: 999;}
 #loading-content {
 position: absolute;
 background: #FFFFFF;
@@ -39,6 +40,11 @@ shinyUI(
       column(uiOutput("map_markers"), width = 4)
     ),
     p(),
+    div(id = "loading-main-table",
+        fluidPage(
+          h2(class = "animated infinite pulse", "Loading database...")
+          # HTML("<img src=images/cruk-logo.png width='50%'></img>")
+        )),
     downloadButton("downloadData", "Download Table"),
     p(),
     fluidRow(

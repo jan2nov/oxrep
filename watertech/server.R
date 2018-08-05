@@ -40,7 +40,7 @@ filter_time_data <- function(data,start,end){
 # Define server logic
 shinyServer(function(input, output, session) {
   
-  source("modal_summary_tab.R", local = TRUE)$value
+  # source("modal_summary_tab.R", local = TRUE)$value
   
   ################# timeline ################
   output$timeperiod_main_DT_UI <- renderUI({
@@ -100,6 +100,9 @@ shinyServer(function(input, output, session) {
   ################## main datatable ################
   output$main_DT <- DT::renderDataTable({
 
+    shinyjs::show(id = "loading-main-table",
+                  anim = TRUE,
+                  animType = "fade")
     # filter by type
     selected_filter_bar <- input$filterbar
     if (!is.null(selected_filter_bar)) {
@@ -115,6 +118,9 @@ shinyServer(function(input, output, session) {
                                             input$timeperiod_data[2])
     }
     
+    shinyjs::hide(id = "loading-main-table",
+                  anim = TRUE,
+                  animType = "fade")
     display_tbl <- display_main_data %>% 
       select(display_main_label_df$data.name)
     

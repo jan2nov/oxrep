@@ -99,7 +99,10 @@ shinyServer(function(input, output, session) {
   
   ################## main datatable ################
   output$main_DT <- DT::renderDataTable({
-
+    shinyjs::show(id = "loading-main-table",
+                  anim = TRUE,
+                  animType = "fade")
+    
     #time period selection
     if (is.null(input$timeperiod_data)) {
       return()
@@ -113,6 +116,10 @@ shinyServer(function(input, output, session) {
     if (!is.null(selected_type)) {
       display_main_data <- filter_data(display_main_data,selected_type)
     }
+    
+    shinyjs::hide(id = "loading-main-table",
+                  anim = TRUE,
+                  animType = "fade")
     
     display_tbl <- display_main_data %>% 
       select(display_main_label_df$data.name)

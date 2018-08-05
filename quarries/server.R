@@ -133,12 +133,17 @@ shinyServer(function(input, output, session) {
   
   ################## main datatable ################
   output$main_DT <- DT::renderDataTable({
-
+    shinyjs::show(id = "loading-main-table",
+                  anim = TRUE,
+                  animType = "fade")
     # filter by stones    
     selected_quarries <- input$quarries_mined
     if (!is.null(selected_quarries)) {
       display_main_data <- filter_data(display_main_data,selected_quarries)
     }
+    shinyjs::hide(id = "loading-main-table",
+                  anim = TRUE,
+                  animType = "fade")
     
     display_tbl <- display_main_data %>% 
       select(display_tbl_labels)
@@ -199,7 +204,7 @@ shinyServer(function(input, output, session) {
         display_main_data <- filter_data(display_main_data,selected_quarries)
       }
       
-      display_main_data <- display_main_data %>% select(display_main_label_df)
+      display_main_data <- display_main_data %>% select(display_main_label_df$data.name)
       table_labels <- nice_col_headings(display_main_data) %>% 
                       tools::toTitleCase() %>% 
                       trimws()

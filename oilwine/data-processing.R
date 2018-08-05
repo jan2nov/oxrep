@@ -13,7 +13,7 @@ nice_col_headings <- function(data){
 
 ############### load main data ###############
 secure_database_details <- read_csv("data/secure_details.csv", locale = locale(encoding = "UTF-8"))
-username_oxrep_db <- "local.username"
+username_oxrep_db <- "server.username"
 
 oxrep_db <- dbPool(
   drv = RMariaDB::MariaDB(),
@@ -26,15 +26,17 @@ oxrep_db <- dbPool(
   user = secure_database_details %>%
     filter(property == username_oxrep_db) %>%
     select(value) %>%
-    .[[1]],
-  password = secure_database_details %>%
-    filter(property == "local.password") %>% 
-    select(value) %>%
     .[[1]]
+  # password = secure_database_details %>%
+  #   filter(property == "local.password") %>% 
+  #   select(value) %>%
+  #   .[[1]]
 )
 
 data_presses <- {presses <- oxrep_db %>% tbl("PressLoc") %>% collect() }
 data_structure <- {structure <- oxrep_db %>% tbl("PressStructures") %>% collect() } 
+dt_references_data <- {ref <- oxrep_db %>% tbl("References") %>%  collect()}
+dt_pub_data <- {pub <- oxrep_db %>% tbl("Publications") %>% collect()}
 
 # load table labels
 display_table_labels <- read_csv("data/presses-table-labels.csv")
@@ -60,7 +62,7 @@ total_observations_data <- nrow(data_presses)
 
 ######### transfer to display_data ###########
 display_main_data <- data_presses %>%
-  select(-contains("ID")) %>%
+  # select(-contains("ID")) %>%
   # select(display_main_label_df$data.name) %>%
   collect()
 
@@ -88,6 +90,8 @@ choices_stack <- list("Percent" = "percent", "Number of Presses" = "normal")
 
 ### =========== Replace empty strings with NA
 display_main_data[display_main_data == ""] <- NA
+dt_pub_data[dt_pub_data == ""] <- NA
+dt_references_data[dt_references_data == ""] <- NA
 ############### close the database ###########
 poolClose(oxrep_db)
 ##############################################

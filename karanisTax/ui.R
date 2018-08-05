@@ -36,6 +36,11 @@ shinyUI(
     p(),
     uiOutput("taxtype_bar"),
     p(),
+    div(id = "loading-main-table",
+        fluidPage(
+          h2(class = "animated infinite pulse", "Loading database...")
+          # HTML("<img src=images/cruk-logo.png width='50%'></img>")
+        )),
     downloadButton("downloadData", "Download Table"),
     p(),
     tabsetPanel(

@@ -32,6 +32,11 @@ shinyUI(
     p(),
     downloadButton("downloadData", "Download Table"),
     p(),
+    div(id = "loading-main-table",
+        fluidPage(
+          h2(class = "animated infinite pulse", "Loading database...")
+          # HTML("<img src=images/cruk-logo.png width='50%'></img>")
+        )),
     tabsetPanel(
       tabPanel("Summary Table",
         DT::dataTableOutput("main_DT")

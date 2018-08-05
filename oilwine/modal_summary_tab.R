@@ -1,3 +1,17 @@
+info_reference <- function(data) {
+  data_return <- paste0(data$author,". ",data$year,". \"",data$title,"\"") %>% as.data.frame(stringsAsFactors=FALSE)
+  row_na <- which(!is.na(data$journal))
+  data_return[row_na,] <- str_c(data_return[row_na,],paste("",data[row_na,]$journal))
+  row_na <- which(!is.na(data$issue))
+  data_return[row_na,] <- str_c(data_return[row_na,],paste0(" ",data[row_na,]$issue,","))
+  row_na <- which(!is.na(data$start))
+  data_return[row_na,] <- str_c(data_return[row_na,],paste("",data[row_na,]$start))
+  row_na <- which(!is.na(data$end))
+  data_return[row_na,] <- str_c(data_return[row_na,],paste0("-",data[row_na,]$end,"."))
+  colnames(data_return) <- "References"
+  data_return
+}
+
 info_renderTable <- function(data, ...) {
   nice_col_headings2 <-
     plyr::mapvalues(
@@ -106,9 +120,15 @@ width = '100%', align = 'l', na = 'missing')
 output$references <- renderTable({
   modal_row_data <- modal_row_data()
   
-  modal_row_data %>%
-    select(PressReferences) %>%
-    info_renderTable()
+  ref_data <- modal_row_data %>%
+    select(ID)
+  ref_data <- filter(dt_references_data,pressesSiteRes %in% ref_data) %>%
+    select(publicationRef)
+  ref_data <- filter(dt_pub_data,pubID %in% ref_data)
+  if (nrow(ref_data) != 0) {
+    info_reference(ref_data)
+  }
+  
 },
 width = '100%', align = 'l', na = 'missing')
 
@@ -121,7 +141,6 @@ output$summary_timeline <- renderPlot({
   year_min <- year_min - year_plus
   year_max <- year_max + year_plus
   set_break <- floor((abs(year_min)+abs(year_max))/10)
-  print(set_break)
   
   gg_timeline_plot(
     start = modal_row_data$notBeforeConstructionDate,
@@ -148,8 +167,8 @@ output$modal_summaryTab <- renderUI({
       column(leafletOutput("summary_leaflet_map"),width = 4)
     ),
     p(),
-    tableOutput("notes")
-    # tableOutput("references")
+    tableOutput("notes"),
+    tableOutput("references")
   )
   
 })
